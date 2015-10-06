@@ -22,14 +22,105 @@ Maillage Maillage::cylindre(const QVector3D & a, const double & rayon, const  in
     //premier cercle
     for(int i = 0; i < nbMeridiens; i++)
     {
-        geom.append(QVector3D(a.x()+cos(angle), a.y(), a.z()+sin(angle)));
+        geom.append(QVector3D(a.x()+cos(angle)*rayon, a.y(), a.z()+sin(angle)*rayon));
         angle += 2*M_PI/nbMeridiens;
     }
 
     //deuxieme cercle
     for(int i = 0; i < nbMeridiens; i++)
     {
-        geom.append(QVector3D(b.x()+cos(angle), b.y(), b.z()+sin(angle)));
+        geom.append(QVector3D(b.x()+cos(angle)*rayon, b.y(), b.z()+sin(angle)*rayon));
+        angle += 2*M_PI/nbMeridiens;
+    }
+
+    /*****************************
+     *    Génération topologie   *
+     *****************************/
+    //topo cercle bas + cercle haut
+    for(int i =0; i < nbMeridiens; i++)
+    {
+        topo.append(nbMeridiens*2);topo.append(i);topo.append((i+1)%nbMeridiens);
+        topo.append(nbMeridiens*2+1);topo.append((i+1)%nbMeridiens+nbMeridiens);topo.append(i+nbMeridiens);
+    }
+
+    //topo cylindre
+    for(int i = 0; i < nbMeridiens; i++)
+    {
+        topo.append(i);topo.append(i+nbMeridiens);topo.append((i+1)%nbMeridiens);
+        topo.append(nbMeridiens+i);topo.append((i+1)%nbMeridiens+nbMeridiens);topo.append((i+1)%nbMeridiens);
+    }
+
+    geom.append(a);
+    geom.append(b);
+
+    return Maillage(geom, topo, normales);
+}
+
+Maillage Maillage::cone(const QVector3D & a, const double & rayon, const  int & hauteur, const int & nbMeridiens)
+{
+    QVector<QVector3D> geom;
+    QVector<int> topo;
+    QVector<QVector3D> normales;
+    float angle = 0;
+    QVector3D b(a.x(), a.y() + hauteur, a.z());
+
+
+    /*****************************
+     *    Génération géométrie   *
+     *****************************/
+    //premier cercle
+    for(int i = 0; i < nbMeridiens; i++)
+    {
+        geom.append(QVector3D(a.x()+cos(angle)*rayon, a.y(), a.z()+sin(angle)*rayon));
+        angle += 2*M_PI/nbMeridiens;
+    }
+
+    /*****************************
+     *    Génération topologie   *
+     *****************************/
+    //topo cercle
+    for(int i =0; i < nbMeridiens; i++)
+    {
+        topo.append(nbMeridiens);topo.append(i);topo.append((i+1)%nbMeridiens);
+    }
+
+    //topo cone
+    for(int i =0; i < nbMeridiens; i++)
+    {
+        topo.append(i);topo.append(nbMeridiens+1);topo.append((i+1)%nbMeridiens);
+    }
+
+    geom.append(a);
+    geom.append(b);
+
+    return Maillage(geom, topo, normales);
+}
+
+
+
+Maillage Maillage::coneTronque(const QVector3D & a, const double & rayon, const double & rayon2,const  int & hauteur, const int & nbMeridiens)
+{
+    QVector<QVector3D> geom;
+    QVector<int> topo;
+    QVector<QVector3D> normales;
+    float angle = 0;
+    QVector3D b(a.x(), a.y() + hauteur, a.z());
+
+
+    /*****************************
+     *    Génération géométrie   *
+     *****************************/
+    //premier cercle
+    for(int i = 0; i < nbMeridiens; i++)
+    {
+        geom.append(QVector3D(a.x()+cos(angle)*rayon, a.y(), a.z()+sin(angle)*rayon));
+        angle += 2*M_PI/nbMeridiens;
+    }
+
+    //deuxieme cercle
+    for(int i = 0; i < nbMeridiens; i++)
+    {
+        geom.append(QVector3D(b.x()+cos(angle)*rayon2, b.y(), b.z()+sin(angle)*rayon2));
         angle += 2*M_PI/nbMeridiens;
     }
 
@@ -57,51 +148,166 @@ Maillage Maillage::cylindre(const QVector3D & a, const double & rayon, const  in
 
 
 
-
-
-
-
-void Maillage::Merge(Maillage figure2)
+Maillage Maillage::sphere(QVector3D p, double radius, int points)
 {
-    QVector<int> changement;
-    int temp;
-    //on parcours la liste des points de la seconde figure
-    //on vérifie si il y a des points communs entre les deux figures
-    for(int p1 = 0; p1 < figure2.geom.size(); p1++)
-    {
-//        temp = this->ComparePoint(figure2.geom.at(p1));
-//        si le point n'existe pas deja alors on l'ajoute à la geométrie de la premiere figure
-//        on stock également le nouvel indice de ce point
-//        if(temp == -1)
-//        {
-            this->geom.append(figure2.geom.at(p1));
-            temp = this->geom.size()-1;
-        //}
-        //std::cout << "l'indice " << p1 << "est maintenant l'indice " << temp << std::endl;
-        changement.append(temp);
-    }
+    //meme nombre de méridiens et de parallèles
+    QVector<QVector3D> g;
+    QVector<int> t;
 
-    //on ajoute a la premiere topo la seconde en mettant a jour les indices
-    for(int i = 0; i < figure2.topo.size(); i++)
-    {
-        this->topo.append(changement.at(figure2.topo.at(i)));
-    }
-}
 
-int Maillage::ComparePoint(const QVector3D & p1)
-{
-    for(int p2 = 0; p2 < this->geom.size(); p2++)
+    for (int i = 0; i < 2*points; i++) // Boucle pour la création des cercles
     {
-        //si il y a un point en commun alors je ne le rajoute pas à la liste
-        //mais je change les indices au sein de la topo
-        if(this->geom.at(p2) == p1)
+        double phi = i*M_PI/points;
+        for (int j = 1; j <= points-1; j++) // Boucle pour former la sphère
         {
-            //std::cout << "point en commun  !!!" << std::endl;
-            return p2;
+            double theta = j*M_PI/points;
+            qreal x = radius * cos(phi) * sin(theta) + p.x();
+            qreal y = radius * sin(phi) * sin(theta) + p.y();
+            qreal z = radius            * cos(theta) + p.z();
+            g.append(QVector3D(x, y, z));
         }
     }
-    return -1;
+
+    // Faces
+    for (int i = 0; i < (2*points-1)*(points-1)-1; i++)
+    {
+        if ( (i+1) % (points-1) != 0)
+        {
+            t.append(i);
+            t.append(i+1);
+            t.append(points+i);
+
+            t.append(i);
+            t.append(points+i);
+            t.append(points-1+i);
+        }
+    }
+
+    // Dernière bande
+    for (int i = 0; i < points-2; i++)
+    {
+        t.append((2*points-1)*(points-1)+i);
+        t.append((2*points-1)*(points-1)+1+i);
+        t.append(i);
+
+        t.append(i);
+        t.append((2*points-1)*(points-1)+1+i);
+        t.append(i+1);
+    }
+
+    // Poles
+    double phi = 0;
+    double theta = 0;
+    qreal x = radius * cos(phi) * sin(theta) + p.x();
+    qreal y = radius * sin(phi) * sin(theta) + p.y();
+    qreal z = radius            * cos(theta) + p.z();
+    g.append(QVector3D(x, y, z));
+
+    theta = M_PI;
+    x = radius * cos(phi) * sin(theta) + p.x();
+    y = radius * sin(phi) * sin(theta) + p.y();
+    z = radius            * cos(theta) + p.z();
+    g.append(QVector3D(x, y, z));
+
+    // Premier pole
+    for (int i=0; i < 2*points-1; i++)
+    {
+        t.append((2*points)*(points-1));
+        t.append((points-1)*i);
+        t.append((points-1)*i+(points-1));
+    }
+
+    // Complétion du premier pole
+    t.append((2*points)*(points-1));
+    t.append((2*points-1)*(points-1));
+    t.append(0);
+
+    // Deuxième pole
+    for (int i=0; i < 2*points-1; i++)
+    {
+        t.append((2*points)*(points-1)+1);
+        t.append((points-2)+(points-1)+(points-1)*i);
+        t.append((points-2)+(points-1)*i);
+    }
+
+    // Complétion du deuxième pole
+    t.append((2*points)*(points-1)+1);
+    t.append(points-2);
+    t.append((points-2)+(points-1)+(points-1)*2*(points-1));
+
+    return Maillage(g,t);
 }
+
+Maillage Maillage::tore(QVector3D v, int rayon, int epaisseur, int points)
+{
+    QVector<QVector3D> g;
+    QVector<int> t;
+
+    for(int i=1; i <= points; i++)
+    {
+        double angle = i*2*3.14159/points;
+        QVector3D point(v.x()+cos(angle)*rayon, v.y()+sin(angle)*rayon, v.z());
+        //g.append(point);
+        QVector3D w = point - v;
+        w.normalize();
+        for (int j=1; j <= points; j++)
+        {
+            double angle = j*2*3.14159/points;
+            double x = point.x() + epaisseur*(cos(angle)*w.x()+sin(angle)*0);
+            double y = point.y() + epaisseur*(cos(angle)*w.y()+sin(angle)*0);
+            double z = point.z() + epaisseur*(cos(angle)*w.z()+sin(angle)*1);
+            g.append(QVector3D(x, y, z));
+        }
+    }
+
+    // Faces
+    for (int i=0; i <= (points-1)*points-1; i++)
+    {
+        if (i % (points) != (points-1))
+        {
+            t.append(i);
+            t.append(points+i+1);
+            t.append(i+1);
+
+            t.append(i);
+            t.append(points+i);
+            t.append(points+i+1);
+        } else
+        {
+            t.append(i);
+            t.append(i+1);
+            t.append(i+1-points);
+
+            t.append(i);
+            t.append(i+points);
+            t.append(i+1);
+        }
+    }
+
+    // Dernière bande
+    for (int i=0; i < points-1; i++)
+    {
+        t.append(i);
+        t.append(i+1);
+        t.append((points-1)*points+i);
+
+        t.append((points-1)*points+i);
+        t.append(i+1);
+        t.append((points-1)*points+i+1);
+    }
+
+    t.append(points-1);
+    t.append(0);
+    t.append((points-1)*points+points-1);
+
+    t.append((points-1)*points+points-1);
+    t.append(0);
+    t.append((points-1)*points);
+
+    return Maillage(g,t);
+}
+
+
 
 void Maillage::Ecriture(std::string nom)
 {
@@ -135,22 +341,6 @@ void Maillage::Ecriture(std::string nom)
     }
 }
 
-Maillage Maillage::Rotation(const double matrice[3][3])
-{
-    QVector<QVector3D> geom2;
-    QVector3D temp;
-    for (int i = 0; i < geom.size(); ++i)
-    {
-         temp = geom.at(i);
-         temp.setX(temp.x() * matrice[0][0] + temp.y() * matrice[0][1] + temp.z() * matrice[0][2]);
-         temp.setY(temp.x() * matrice[2][0] + temp.y() * matrice[2][1] + temp.z() * matrice[2][2]);
-         temp.setZ(temp.x() * matrice[1][0] + temp.y() * matrice[1][1] + temp.z() * matrice[1][2]);
-         geom2.append(temp);
-    }
-
-    Maillage * sphere = new Maillage(geom2, topo, normales);
-    return *sphere;
-}
 
 Maillage::~Maillage()
 {

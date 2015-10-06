@@ -11,8 +11,24 @@ int main(int argc, char *argv[])
 
 
     std::cout << "Generation cylindre..." << std::endl;
-    Maillage cylindre2 = Maillage::cylindre(a,2,10, 10);
-    cylindre2.Ecriture("monCylindre.obj");
+    Maillage cylindre = Maillage::cylindre(a,2,5,20);
+    cylindre.Ecriture("monCylindre.obj");
+
+    std::cout << "Generation cone..." << std::endl;
+    Maillage cone = Maillage::cone(a,2,5,20);
+    cone.Ecriture("monCone.obj");
+
+    std::cout << "Generation cone tronque..." << std::endl;
+    Maillage coneTronque = Maillage::coneTronque(a,2,1,5,20);
+    coneTronque.Ecriture("monConeTronque.obj");
+
+    std::cout << "Generation sphere..." << std::endl;
+    Maillage sphere = Maillage::sphere(a,1,20);
+    sphere.Ecriture("sphere.obj");
+
+    std::cout << "Generation tore..." << std::endl;
+    Maillage tore = Maillage::tore(a,2,1,20);
+    tore.Ecriture("tore.obj");
 
 }
 

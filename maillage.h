@@ -20,15 +20,13 @@ class Maillage
         // Maillages simples
 
         static Maillage cylindre(const QVector3D & a, const double & rayon, const  int & hauteur, const int & nbMeridiens);
-
+        static Maillage cone(const QVector3D & a, const double & rayon,const int & hauteur, const int & nbMeridiens);
+        static Maillage coneTronque(const QVector3D & a, const double & rayon, const double & rayon2,const  int & hauteur, const int & nbMeridiens);
+        static Maillage sphere(QVector3D p, double radius, int points);
+        static Maillage tore(QVector3D v, int rayon, int epaisseur, int points);
 
         // Utilitaires
-
-        Maillage Rotation(const double matrice[3][3]);
-        int ComparePoint(const QVector3D & p1);
-        void Merge(Maillage figure2);
         void Ecriture(std::string nom);
-
         ~Maillage();
 };
 
