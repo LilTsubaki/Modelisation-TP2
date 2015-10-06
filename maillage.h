@@ -26,6 +26,7 @@ class Maillage
         static Maillage tore(QVector3D v, int rayon, int epaisseur, int points);
 
         // Utilitaires
+        static Maillage lectureOff(const std::string nom);
         void Ecriture(std::string nom);
         ~Maillage();
 };
