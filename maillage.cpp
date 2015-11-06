@@ -2,6 +2,36 @@
 #include <math.h>
 #define M_PI           3.14159265358979323846
 
+QVector<QVector3D> Maillage::getGeom() const
+{
+    return geom;
+}
+
+void Maillage::setGeom(const QVector<QVector3D> &value)
+{
+    geom = value;
+}
+
+QVector<int> Maillage::getTopo() const
+{
+    return topo;
+}
+
+void Maillage::setTopo(const QVector<int> &value)
+{
+    topo = value;
+}
+
+QVector<QVector3D> Maillage::getNormales() const
+{
+    return normales;
+}
+
+void Maillage::setNormales(const QVector<QVector3D> &value)
+{
+    normales = value;
+}
+
 Maillage::Maillage()
 {
 

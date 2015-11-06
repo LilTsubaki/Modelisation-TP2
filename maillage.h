@@ -29,6 +29,12 @@ class Maillage
         static Maillage lectureOff(const std::string nom);
         void Ecriture(std::string nom);
         ~Maillage();
+        QVector<QVector3D> getGeom() const;
+        void setGeom(const QVector<QVector3D> &value);
+        QVector<int> getTopo() const;
+        void setTopo(const QVector<int> &value);
+        QVector<QVector3D> getNormales() const;
+        void setNormales(const QVector<QVector3D> &value);
 };
 
 
