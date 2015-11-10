@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication z(argc, argv);
 
-    /*QVector3D a(1,1,1);
+    QVector3D a(1,1,1);
 
 
 
@@ -27,10 +27,10 @@ int main(int argc, char *argv[])
 
     std::cout << "Generation tore..." << std::endl;
     Maillage tore = Maillage::tore(a,2,1,20);
-    tore.Ecriture("tore.obj");*/
+    tore.Ecriture("tore.obj");
 
-    Maillage bunny = Maillage::lectureOff("C:/Users/etu/Desktop/bunny.off");
-    bunny.Ecriture("bunny.obj");
+    /*Maillage bunny = Maillage::lectureOff("C:/Users/etu/Desktop/bunny.off");
+    bunny.Ecriture("bunny.obj");*/
 
 }
 

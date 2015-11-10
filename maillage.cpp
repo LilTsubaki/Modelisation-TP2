@@ -22,7 +22,7 @@ void Maillage::setTopo(const QVector<int> &value)
     topo = value;
 }
 
-QVector<QVector3D> Maillage::getNormales() const
+/*QVector<QVector3D> Maillage::getNormales() const
 {
     return normales;
 }
@@ -30,7 +30,7 @@ QVector<QVector3D> Maillage::getNormales() const
 void Maillage::setNormales(const QVector<QVector3D> &value)
 {
     normales = value;
-}
+}*/
 
 Maillage::Maillage()
 {
@@ -83,7 +83,7 @@ Maillage Maillage::cylindre(const QVector3D & a, const double & rayon, const  in
     geom.append(a);
     geom.append(b);
 
-    return Maillage(geom, topo, normales);
+    return Maillage(geom, topo);
 }
 
 Maillage Maillage::cone(const QVector3D & a, const double & rayon, const  int & hauteur, const int & nbMeridiens)
@@ -123,7 +123,7 @@ Maillage Maillage::cone(const QVector3D & a, const double & rayon, const  int & 
     geom.append(a);
     geom.append(b);
 
-    return Maillage(geom, topo, normales);
+    return Maillage(geom, topo);
 }
 
 
@@ -173,7 +173,7 @@ Maillage Maillage::coneTronque(const QVector3D & a, const double & rayon, const 
     geom.append(a);
     geom.append(b);
 
-    return Maillage(geom, topo, normales);
+    return Maillage(geom, topo);
 }
 
 
@@ -353,12 +353,12 @@ void Maillage::Ecriture(std::string nom)
              fichier << "v " << temp.x() << " " << temp.y() << " " << temp.z() << std::endl;
         }
         fichier << std::endl;
-        for (int i = 0; i < normales.size(); ++i)
+        /*for (int i = 0; i < normales.size(); ++i)
         {
              temp = normales.at(i);
              fichier << "vn " << temp.x() << " " << temp.y() << " " << temp.z() << std::endl;
         }
-        fichier << std::endl;
+        fichier << std::endl;*/
         for (int i = 0; i < topo.size(); i+=3)
         {
              fichier << "f " << topo.at(i)+1 << " " << topo.at(i+1)+1 << " " << topo.at(i+2)+1 << std::endl;
@@ -389,7 +389,7 @@ Maillage Maillage::lectureOff(std::string nom)
         if (readLine != "OFF")
         {
             std::cout << "The file to read is not in OFF format." << std::endl;
-            return Maillage(geom, topo, normales);
+            return Maillage(geom, topo);
         }
 
         getline(fichier,readLine);

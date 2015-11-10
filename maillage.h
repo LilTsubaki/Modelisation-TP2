@@ -10,11 +10,11 @@ class Maillage
 {
     QVector<QVector3D> geom; //contient les points du maillage
     QVector<int> topo; //contient des triplets d'indice pour chaque triangle du maillage
-    QVector<QVector3D> normales; //contient les normales au point
+    //QVector<QVector3D> normales; //contient les normales au point
 
     public:
         Maillage();
-        Maillage(QVector<QVector3D> geo, QVector<int> top, QVector<QVector3D> norm) : geom(geo), topo(top), normales(norm) {}
+        //Maillage(QVector<QVector3D> geo, QVector<int> top, QVector<QVector3D> norm) : geom(geo), topo(top), normales(norm) {}
         Maillage(QVector<QVector3D> geo, QVector<int> top) : geom(geo), topo(top) {}
 
         // Maillages simples
